@@ -40,6 +40,7 @@ Consola web ejecutiva y plataforma de análisis de datos demográficos sobre el 
 ├── manage.py                # Gestor de comandos de Django
 ├── README.md                # Documentación principal en Markdown
 └── requirements.txt         # Dependencias del proyecto en Python
+```
 
 ---
 
