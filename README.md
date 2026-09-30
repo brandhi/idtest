@@ -17,21 +17,29 @@ Consola web ejecutiva y plataforma de análisis de datos demográficos sobre el 
 
 ```text
 .
-├── census/                # Aplicación principal de Django (Vistas, URLs, Templates)
-│   ├── templates/census/  # Vistas HTML (Home, Incisos A, B y C)
-│   ├── services.py        # Llamadas a Stored Procedures
-│   └── views.py           # Controladores de la interfaz
-├── core/                  # Configuración global de Django
-├── dql/                   # Definición de Stored Procedures (SP_A, SP_B, SP_C)
-├── etl/                   # Scripts del Pipeline ETL
-│   ├── DATA/              # Archivos CSV generados y Dumps de BD (.sql / .dump)
-│   ├── etl_down_up.py     # Script principal de extracción, transformación y carga
-│   └── BD_PRUEBA_.csv     # Fuente original de datos
-├── DDL_IDTEST.sql         # Definición del esquema IDTEST y tablas
-├── docker-compose.yml     # Orquestación de servicios (Web + BD)
-├── Dockerfile             # Imagen Docker para la app web
-└── requirements.txt       # Dependencias de Python
-```
+├── census/                  # Aplicación principal Django (Lógica de negocio e interfaz)
+│   ├── templates/census/    # Plantillas HTML (Home e Incisos A, B y C)
+│   ├── models.py            # Modelos de datos para el esquema idtest
+│   ├── services.py          # Capa de servicio para invocación de Stored Procedures
+│   ├── views.py             # Controladores y lógica de vistas
+│   └── urls.py              # Enrutamiento interno de la aplicación census
+├── core/                    # Configuración del proyecto Django (settings, urls, wsgi)
+├── docs/                    # Documentación oficial generada y entregables en PDF/ODT
+│   ├── PRUEBA_TECNICA_BD.pdf# Respuestas y notas a la prueba técnica
+│   └── README.pdf           # Guía e instrucciones de ejecución en PDF
+├── dql/                     # Scripts SQL de Stored Procedures (sp_a, sp_b, sp_c)
+├── etl/                     # Pipeline ETL para procesamiento e ingesta de datos
+│   ├── DATA/                # Archivos CSV transformados y Dumps de la BD (.sql y .dump)
+│   ├── etl_down_up.py       # Script principal de Extracción, Transformación y Carga masiva (COPY)
+│   ├── scan_csv.py          # Script de inspección y análisis del dataset original
+│   ├── aux.py               # Mapeo de columnas y configuraciones auxiliares del ETL
+│   └── BD_PRUEBA_.csv       # Fuente de datos original (dataset base)
+├── DDL_IDTEST.sql           # Definición DDL del esquema idtest, tablas e índices
+├── docker-compose.yml       # Orquestación de contenedores (App Django + PostgreSQL)
+├── Dockerfile               # Configuración del contenedor para la aplicación web
+├── manage.py                # Gestor de comandos de Django
+├── README.md                # Documentación principal en Markdown
+└── requirements.txt         # Dependencias del proyecto en Python
 
 ---
 
