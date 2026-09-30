@@ -55,6 +55,8 @@ CSV_CENSUS = PATH_DEST+"fid_population_census.csv"
 
 
 def get_data_from_source():
+  # crear el directorio de destino en caso de no existir
+  os.makedirs(PATH_DEST, exist_ok=True)
   print(" Generando archivos CSV a partir del original...")
   df = pd.read_csv(INPUT_CSV, dtype=str, encoding='latin1')  # Leemos todo como string para preservar ceros a la izquierda
 
