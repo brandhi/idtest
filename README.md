@@ -50,6 +50,19 @@ Asegúrate de contar con las siguientes herramientas instaladas en tu sistema:
 git clone https://github.com/brandhi/idtest.git
 cd idtest
 ```
+Es immportante agregar un archivo .env con los siguientes datos de prueba
+```bash
+# Django Settings
+DEBUG=True
+SECRET_KEY="35*$9_@o@w+dy!5i5sp9%*oi)9cn80&w(4xriw#d@oa^4&dy*$"
+
+# PostgreSQL Credentials
+DB_NAME=idtest_db
+DB_USER=postgres
+DB_PASSWORD=postgres_password
+DB_HOST=127.0.0.1
+DB_PORT=5432
+```
 
 ### 2. Levantar el Entorno con Docker Compose
 Este comando compilará la aplicación web Django e inicializará el contenedor de PostgreSQL/PostGIS montando automáticamente la estructura DDL y los Stored Procedures (`/docker-entrypoint-initdb.d/`).
