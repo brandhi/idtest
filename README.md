@@ -118,7 +118,7 @@ Una vez que los contenedores estén arriba y la base de datos poblada, abre tu n
 
 **[http://localhost:8000/census/](http://localhost:8000/census/)**
 
-Nota: Esta es una URL local, solo funcionara en la maquina host en la que se ejecute el proyecto.
+**Nota: Esta es una URL local, solo funcionara en la maquina host en la que se ejecute el proyecto.**
 
 ### Módulos Disponibles:
 * **Dashboard Principal (`/`):** Vista general con accesos directos, esquema de la base de datos y enlace de descarga para los 5 archivos ETL/Dump.
