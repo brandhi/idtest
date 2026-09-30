@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inciso A - Población Femenina de 15 a 49 años</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+
+
+        <!-- NAVBAR NAVEGABLE GLOBAL -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+            <div class="container">
+                <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
+                    <i class="bi bi-database-gear text-primary fs-4"></i>
+                    <span>Censo INEGI <span class="badge bg-primary fs-6 ms-1">SQL Platform</span></span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active fw-semibold" href="{% url 'home' %}"><i class="bi bi-house-door-fill me-1"></i>Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'inciso_a' %}"><i class="bi bi-gender-female me-1"></i>Inciso A</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'inciso_b' %}"><i class="bi bi-accessibility me-1"></i>Inciso B</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'inciso_c' %}"><i class="bi bi-bar-chart-line me-1"></i>Inciso C</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>A. Población Femenina de 15 a 49 años</h2>
+            <span class="badge bg-dark fs-6">PL/pgSQL SP + Chart.js</span>
+        </div>
+
+        <!-- TABLA DE DATOS -->
+        <div class="card shadow-sm mb-5">
+            <div class="card-header bg-dark text-white fw-bold">
+                Detalle de Registros por Asentamiento / Colonia
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Colonia</th>
+                                <th>ID Municipio</th>
+                                <th>Estado</th>
+                                <th>Población Femenina (15a49)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in resultados %}
+                            <tr>
+                                <td><strong>{{ row.colonia }}</strong></td>
+                                <td>{{ row.municipio_num }}</td>
+                                <td>{{ row.estado }}</td>
+                                <td><span class="badge bg-primary fs-6">{{ row.total_poblacion_femenina_15a49 }}</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">No hay registros devueltos por el Stored Procedure.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+                <!-- TARJETAS RESUMEN (KPIs) -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm border-0 border-start border-4 border-primary bg-white h-100">
+                    <div class="card-body">
+                        <div class="text-muted small fw-bold">VALOR ESTATAL CONSOLIDADO</div>
+                        <div class="fs-3 fw-bold text-primary mt-1" id="kpiValorEstatal">2,495,688</div>
+                        <div class="small text-secondary">Población Femenina (15-49)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm border-0 border-start border-4 border-info bg-white h-100">
+                    <div class="card-body">
+                        <div class="text-muted small fw-bold">COLONIAS MOSTRADAS</div>
+                        <div class="fs-3 fw-bold text-info mt-1" id="kpiTotalColonias">0</div>
+                        <div class="small text-secondary">Registros recuperados (p_limit)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm border-0 border-start border-4 border-warning bg-white h-100">
+                    <div class="card-body">
+                        <div class="text-muted small fw-bold">GRANULARIDAD DE LA FUENTE</div>
+                        <div class="fs-5 fw-bold text-warning mt-1">Consolidado / Repetido</div>
+                        <div class="small text-secondary">Requiere desagregación en origen</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL VISUAL -->
+        <div class="row mb-5">
+            <div class="col-lg-7 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+                        <span>Comparativa por Colonia (Top N)</span>
+                        <span class="badge bg-warning text-dark">Valores Constantes</span>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chartColoniasBars"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-white fw-bold">
+                        Distribución de Registros en Muestra
+                    </div>
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <div style="width: 80%; max-width: 280px;">
+                            <canvas id="chartDonaDistribucion"></canvas>
+                        </div>
+                        <div class="mt-3 text-muted small text-center">
+                            Proporción equitativa por dato homogéneo reportado a nivel Entidad.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- HALLAZGO TÉCNICO -->
+        <div class="card border-warning mb-4 shadow-sm">
+            <div class="card-header bg-warning text-dark fw-bold">
+                Hallazgo Técnico de Datos:
+            </div>
+            <div class="card-body">
+                <p class="card-text mb-0">
+                    Al analizar la fuente original <code>BD_PRUEBA_.csv</code>, se identificó que las métricas demográficas 
+                    (como <code>p_15a49_f</code> y <code>p_total</code>) contienen valores consolidados a nivel Entidad Federativa repetidos en cada asentamiento geográfico. 
+                    Por ejemplo, registros individuales de colonias en la CDMX muestran la cifra del estado completo (8,851,080 en <code>p_total</code> y 2,495,688 en <code>p_15a49_f</code>). 
+                    Aplicar una agregación directa <code>SUM()</code> sobre esta estructura genera un producto cartesiano que infla los totales a decenas de millones.
+                </p>
+            </div>
+        </div>
+
+        <!-- PROPUESTA -->
+        <div class="card border-primary mb-5 shadow-sm">
+            <div class="card-header bg-primary text-white fw-bold">
+                Propuesta:
+            </div>
+            <div class="card-body">
+                <p class="card-text mb-0">
+                    Asumiendo que la columna <code>fbi_p_15a49_f</code> representa el total ya calculado de población femenina de 15 a 49 años por asentamiento/colonia, 
+                    la lógica correcta consiste en obtener la métrica escalar por colonia mediante <code>MAX(fbi_p_15a49_f)</code> (para evitar duplicaciones en caso de joins con múltiples geografías) 
+                    y ordenar de manera descendente para extraer el Top N configurado en el parámetro <code>p_limit</code>.
+                </p>
+            </div>
+        </div>
+
+        <!-- CÓDIGO SQL DEL SP -->
+        <h2 class="mb-4">Código SQL del Stored Procedure (sp_a.sql)</h2>
+        <div class="card bg-dark text-light shadow-sm">
+            <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                <span class="badge bg-secondary">PostgreSQL / PL/pgSQL</span>
+                <small class="text-muted">IDTEST.SP_GET_FEMALE_POPULATION</small>
+            </div>
+            <div class="card-body p-0">
+                <pre class="m-0 p-3 text-light" style="font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; background-color: #1e1e1e; overflow-x: auto;">
+                  <code>
+CREATE OR REPLACE PROCEDURE IDTEST.SP_GET_FEMALE_POPULATION(
+  OUT   p_status_code   INT,
+  OUT   p_status_message   VARCHAR,
+  INOUT p_refcursor  REFCURSOR DEFAULT 'ref_top10_female',
+  IN  p_limit   INT DEFAULT 10         -- Parámetro de entrada con default 10
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  v_state   TEXT;
+  v_msg     TEXT;
+  v_detail  TEXT;
+BEGIN
+  -- 1. Inicialización de variables de control
+  p_status_code := 0;
+  p_status_message := 'Operación ejecutada con éxito.';
+
+  -- 2. Apertura del cursor dinámico usando COALESCE para mayor seguridad si p_limit viene explícitamente como NULL
+  OPEN p_refcursor FOR
+    SELECT 
+      g.cvc_nomgeo            AS colonia,
+      g.cbi_cve_mun           AS municipio_num,
+      e.cvc_nom_ent           AS estado,
+      MAX(c.fbi_p_15a49_f)    AS total_poblacion_femenina_15a49 -- Asumiendo que esta columna contiene el precalculo por cada colonia.
+    FROM IDTEST.FID_POPULATION_CENSUS c
+    INNER JOIN IDTEST.CID_GEOGRAPHY g 
+      ON  c.ffk_cvegeo = g.cck_cvegeo 
+    INNER JOIN IDTEST.CID_STATE e 
+      ON g.cfk_cve_ent = e.cck_cve_ent 
+    WHERE LOWER(TRIM(g.cvc_nomgeo)) NOT IN ('sin nombre', 'sin nombre (en construccion)', 'ninguno', '')
+      AND g.cvc_nomgeo IS NOT NULL
+    GROUP BY 
+      g.cvc_nomgeo,
+      g.cbi_cve_mun,
+      e.cvc_nom_ent
+    ORDER BY 
+      total_poblacion_femenina_15a49 DESC
+    LIMIT COALESCE(p_limit, 10);
+
+EXCEPTION
+  WHEN OTHERS THEN
+    -- Captura de diagnósticos y pila de error
+    GET STACKED DIAGNOSTICS 
+      v_state  = RETURNED_SQLSTATE,
+      v_msg = MESSAGE_TEXT,
+      v_detail = PG_EXCEPTION_DETAIL;
+
+    -- Formato de respuesta de error
+    p_status_code := -1;
+    p_status_message := FORMAT('Error [%s]: %s. Detalle: %s', v_state, v_msg, COALESCE(v_detail, 'Sin detalle adicional'));
+
+    RAISE WARNING 'Excepción capturada en SP_GET_FEMALE_POPULATION: %', p_status_message;
+END;
+$$;
+                  </code>
+                </pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE CHART.JS -->
+    <script>
+        const labels = [];
+        const dataValores = [];
+
+        {% for row in resultados %}
+            labels.push("{{ row.colonia }}");
+            dataValores.push({{ row.total_poblacion_femenina_15a49|default:0 }});
+        {% endfor %}
+
+        // Actualizar KPIs
+        document.getElementById('kpiTotalColonias').innerText = labels.length;
+        if (dataValores.length > 0) {
+            document.getElementById('kpiValorEstatal').innerText = dataValores[0].toLocaleString();
+        }
+
+        // Paleta de colores atractiva
+        const palette = [
+            '#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545',
+            '#fd7e14', '#ffc107', '#198754', '#20c997', '#0dcaf0'
+        ];
+
+        // 1. Gráfica de Barras Horizontal
+        const ctx1 = document.getElementById('chartColoniasBars').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Población Femenina (15-49)',
+                    data: dataValores,
+                    backgroundColor: 'rgba(13, 110, 253, 0.75)',
+                    borderColor: 'rgba(13, 110, 253, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y', // Barras horizontales
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: context => ` Total: ${context.raw.toLocaleString()} hab.`
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: value => (value / 1000000).toFixed(1) + 'M'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 2. Gráfica de Dona (Distribución)
+        const ctx2 = document.getElementById('chartDonaDistribucion').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: dataValores,
+                    backgroundColor: palette.slice(0, labels.length)
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: context => ` ${context.label}: ${context.raw.toLocaleString()}`
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inciso B - Discapacidad por Estado</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+
+        <!-- NAVBAR NAVEGABLE GLOBAL -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+            <div class="container">
+                <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
+                    <i class="bi bi-database-gear text-primary fs-4"></i>
+                    <span>Censo INEGI <span class="badge bg-primary fs-6 ms-1">SQL Platform</span></span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active fw-semibold" href="{% url 'home' %}"><i class="bi bi-house-door-fill me-1"></i>Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'inciso_a' %}"><i class="bi bi-gender-female me-1"></i>Inciso A</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'inciso_b' %}"><i class="bi bi-accessibility me-1"></i>Inciso B</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'inciso_c' %}"><i class="bi bi-bar-chart-line me-1"></i>Inciso C</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>B. Métricas de Discapacidad por Entidad Federativa</h2>
+            <span class="badge bg-dark fs-6">PL/pgSQL SP + Chart.js</span>
+        </div>
+
+        <!-- TABLA DE DATOS -->
+        <div class="card shadow-sm mb-5">
+            <div class="card-header bg-dark text-white fw-bold">
+                Detalle de Resultados por Entidad
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Estado</th>
+                                <th>Población Total</th>
+                                <th>Total c/ Discapacidad</th>
+                                <th>dis Motriz</th>
+                                <th>dis Visual</th>
+                                <th>dis Auditiva</th>
+                                <th>dis Lenguaje</th>
+                                <th>dis Mental</th>
+                                <th>% Discapacidad</th>
+                                <th>% Motriz</th>
+                                <th>% Visual</th>
+                                <th>% Auditiva</th>
+                                <th>% Lenguaje</th>
+                                <th>% Mental</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in resultados %}
+                            <tr>
+                                <td><strong>{{ row.estado }}</strong></td>
+                                <td>{{ row.poblacion_total }}</td>
+                                <td>{{ row.total_con_discapacidad }}</td>
+                                <td>{{ row.dis_motriz }}</td>
+                                <td>{{ row.dis_visual }}</td>
+                                <td>{{ row.dis_auditiva }}</td>
+                                <td>{{ row.dis_lenguaje }}</td>
+                                <td>{{ row.dis_mental }}</td>
+                                <td><span class="badge bg-primary">{{ row.pct_con_discapacidad }}%</span></td>
+                                <td>{{ row.pct_motriz }}%</td>
+                                <td>{{ row.pct_visual }}%</td>
+                                <td>{{ row.pct_auditiva }}%</td>
+                                <td>{{ row.pct_lenguaje }}%</td>
+                                <td>{{ row.pct_mental }}%</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="14" class="text-center">No hay registros devueltos por el Stored Procedure.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN DE GRÁFICAS DYNAMICAS -->
+        <div class="row mb-5">
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-white fw-bold">
+                        Top 10 Estados con Mayor % de Población con Discapacidad
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chartTopPct"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-white fw-bold">
+                        Distribución de Tipos de Discapacidad por Estado (%)
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chartBreakdown"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- HALLAZGO TÉCNICO -->
+        <div class="card border-primary mb-5">
+            <div class="card-header bg-primary text-white fw-bold">
+                Hallazgo Técnico y Criterio de Agregación Metodológico
+            </div>
+            <div class="card-body">
+                <p class="card-text mb-0">
+                    Se asume que el suministro de datos cuenta con las métricas 
+                    demográficas (<code>p_total</code>, <code>pcon_lim</code>, <code>pclim_*</code>) precalculadas y consolidadas a nivel
+                    Entidad Federativa (Estado).
+                    <br><br>
+                    Por esta razón, se utiliza la función de agregación <strong>MAX()</strong> agrupada por estado, 
+                    evitando la duplicidad o sobreconteo (<em>fan-out</em>) que ocurriría al aplicar <code>SUM()</code> 
+                    sobre las distintas geometrías/colonias asociadas a una misma entidad.
+                </p>
+            </div>
+        </div>
+
+        <!-- CÓDIGO SQL DEL SP -->
+        <h2 class="mb-4">Código SQL del Stored Procedure (sp_b.sql)</h2>
+        <div class="card bg-dark text-light shadow-sm">
+            <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                <span class="badge bg-secondary">PostgreSQL / PL/pgSQL</span>
+                <small class="text-muted">IDTEST.SP_GET_DISABILITY_BY_STATE</small>
+            </div>
+            <div class="card-body p-0">
+                <pre class="m-0 p-3 text-light" style="font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; background-color: #1e1e1e; overflow-x: auto;"><code>CREATE OR REPLACE PROCEDURE IDTEST.SP_GET_DISABILITY_BY_STATE(
+  OUT   p_status_code   INT,
+  OUT   p_status_message   VARCHAR,
+  INOUT p_refcursor  REFCURSOR DEFAULT 'ref_disability_state'
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  v_state   TEXT;
+  v_msg  TEXT;
+  v_detail  TEXT;
+BEGIN
+  p_status_code := 0;
+  p_status_message := 'Operación ejecutada con éxito.';
+
+  -- Se asume agregación previa a nivel entidad; se usa MAX() para extraer el valor escalar único.
+  OPEN p_refcursor FOR
+    SELECT 
+      e.cvc_nom_ent                                       AS estado,
+      MAX(c.fbi_p_total )                                 AS poblacion_total,
+      -- Totales absolutos por condición
+      MAX(c.fbi_pcon_lim)                                 AS total_con_discapacidad,
+      MAX(c.fbi_pclim_mot)                                AS dis_motriz,
+      MAX(c.fbi_pclim_vis)                                AS dis_visual,
+      MAX(c.fbi_pclim_aud)                                AS dis_auditiva,
+      MAX(c.fbi_pclim_leng)                               AS dis_lenguaje,
+      MAX(c.fbi_pclim_men)                                AS dis_mental,
+      -- Porcentajes sobre la población total del estado
+      ROUND((MAX(c.fbi_pcon_lim)::NUMERIC / NULLIF(MAX(c.fbi_p_total), 0)) * 100, 2)    AS pct_con_discapacidad,
+      ROUND((MAX(c.fbi_pclim_mot)::NUMERIC / NULLIF(MAX(c.fbi_p_total), 0)) * 100, 2)   AS pct_motriz,
+      ROUND((MAX(c.fbi_pclim_vis)::NUMERIC / NULLIF(MAX(c.fbi_p_total), 0)) * 100, 2)   AS pct_visual,
+      ROUND((MAX(c.fbi_pclim_aud)::NUMERIC / NULLIF(MAX(c.fbi_p_total), 0)) * 100, 2)   AS pct_auditiva,
+      ROUND((MAX(c.fbi_pclim_leng)::NUMERIC / NULLIF(MAX(c.fbi_p_total), 0)) * 100, 2)  AS pct_lenguaje,
+      ROUND((MAX(c.fbi_pclim_men)::NUMERIC / NULLIF(MAX(c.fbi_p_total), 0)) * 100, 2)   AS pct_mental
+    FROM IDTEST.FID_POPULATION_CENSUS c
+    INNER JOIN IDTEST.CID_GEOGRAPHY g 
+      ON c.ffk_cvegeo = g.cck_cvegeo
+    INNER JOIN IDTEST.CID_STATE e 
+      ON g.cfk_cve_ent = e.cck_cve_ent
+    GROUP BY 
+      e.cck_cve_ent,
+      e.cvc_nom_ent
+    ORDER BY 
+      pct_con_discapacidad DESC;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    GET STACKED DIAGNOSTICS 
+      v_state  = RETURNED_SQLSTATE,
+      v_msg = MESSAGE_TEXT,
+      v_detail = PG_EXCEPTION_DETAIL;
+
+    p_status_code := -1;
+    p_status_message := FORMAT('Error [%s]: %s. Detalle: %s', v_state, v_msg, COALESCE(v_detail, 'Sin detalle adicional'));
+
+    RAISE WARNING 'Excepción capturada en SP_GET_DISABILITY_BY_STATE: %', p_status_message;
+END;
+$$;</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE CHART.JS -->
+    <script>
+        // Parsear datos de Django a arreglos JS
+        const labels = [];
+        const dataPctTotal = [];
+        const dataMotriz = [];
+        const dataVisual = [];
+        const dataAuditiva = [];
+        const dataLenguaje = [];
+        const dataMental = [];
+
+        {% for row in resultados %}
+            labels.push("{{ row.estado }}");
+            dataPctTotal.push({{ row.pct_con_discapacidad|default:0 }});
+            dataMotriz.push({{ row.pct_motriz|default:0 }});
+            dataVisual.push({{ row.pct_visual|default:0 }});
+            dataAuditiva.push({{ row.pct_auditiva|default:0 }});
+            dataLenguaje.push({{ row.pct_lenguaje|default:0 }});
+            dataMental.push({{ row.pct_mental|default:0 }});
+        {% endfor %}
+
+        // 1. Gráfica 1: Top Estados por % de Discapacidad Total (Tomamos los primeros 10)
+        const ctx1 = document.getElementById('chartTopPct').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: labels.slice(0, 10),
+                datasets: [{
+                    label: '% Población con Discapacidad',
+                    data: dataPctTotal.slice(0, 10),
+                    backgroundColor: 'rgba(13, 110, 253, 0.75)',
+                    borderColor: 'rgba(13, 110, 253, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { callback: value => value + '%' }
+                    }
+                }
+            }
+        });
+
+        // 2. Gráfica 2: Desglose por Tipo de Discapacidad (Barra Apilada - Top 8)
+        const ctx2 = document.getElementById('chartBreakdown').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: labels.slice(0, 8),
+                datasets: [
+                    { label: 'Motriz', data: dataMotriz.slice(0, 8), backgroundColor: '#ff6384' },
+                    { label: 'Visual', data: dataVisual.slice(0, 8), backgroundColor: '#36a2eb' },
+                    { label: 'Auditiva', data: dataAuditiva.slice(0, 8), backgroundColor: '#cc65fe' },
+                    { label: 'Lenguaje', data: dataLenguaje.slice(0, 8), backgroundColor: '#ffce56' },
+                    { label: 'Mental', data: dataMental.slice(0, 8), backgroundColor: '#4bc0c0' }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true, ticks: { callback: value => value + '%' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

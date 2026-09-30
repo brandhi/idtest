@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: idtest_db
+    environment:
+      POSTGRES_DB: idtest_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # 1. Ejecuta primero la creación de tablas/esquema
+      - ./DDL_IDTEST.sql:/docker-entrypoint-initdb.d/01_ddl_idtest.sql
+      # 2. Ejecuta la creación de los Stored Procedures en orden
+      - ./dql/sp_a.sql:/docker-entrypoint-initdb.d/02_sp_a.sql
+      - ./dql/sp_b.sql:/docker-entrypoint-initdb.d/03_sp_b.sql
+      - ./dql/sp_c.sql:/docker-entrypoint-initdb.d/04_sp_c.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d idtest_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
+  web:
+    build: .
+    container_name: idtest_web
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_NAME=idtest_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres_password
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

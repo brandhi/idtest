@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Censal - Inicio</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light d-flex flex-column min-vh-100">
+
+    <!-- NAVBAR NAVEGABLE GLOBAL -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
+                <i class="bi bi-database-gear text-primary fs-4"></i>
+                <span>Censo INEGI <span class="badge bg-primary fs-6 ms-1">SQL Platform</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active fw-semibold" href="#"><i class="bi bi-house-door-fill me-1"></i>Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'inciso_a' %}"><i class="bi bi-gender-female me-1"></i>Inciso A</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'inciso_b' %}"><i class="bi bi-accessibility me-1"></i>Inciso B</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'inciso_c' %}"><i class="bi bi-bar-chart-line me-1"></i>Inciso C</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HEADER / HERO SECTION -->
+    <header class="bg-white border-bottom py-5 mb-4 shadow-sm">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-6 fw-bold text-dark mb-2">Métricas Demográficas y Análisis Censal</h1>
+                    <p class="lead text-muted mb-0">
+                        Consola de consulta ejecutiva sobre los Stored Procedures PostgreSQL del esquema <code>IDTEST</code>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="container mb-5 flex-grow-1">
+
+        <!-- TARJETAS NAVEGABLES PARA CADA INCISO -->
+        <div class="row g-4 mb-5">
+            
+            <!-- CARD INCISO A -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0 border-top border-4 border-primary hover-shadow transition">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="rounded-circle bg-primary bg-opacity-10 p-3 text-primary">
+                                <i class="bi bi-gender-female fs-3"></i>
+                            </div>
+                            <span class="badge bg-primary">Inciso A</span>
+                        </div>
+                        <h5 class="card-title fw-bold">Población Femenina (15 a 49 años)</h5>
+                        <p class="card-text text-muted small flex-grow-1">
+                            Consulta del Top N de asentamientos/colonias. Análisis del hallazgo técnico sobre métricas consolidadas repetidas a nivel entidad.
+                        </p>
+                        <div class="mb-3">
+                            <small class="text-secondary fw-semibold">SP Involucrado:</small>
+                            <code class="d-block text-dark bg-light p-1 rounded mt-1 border">SP_GET_FEMALE_POPULATION</code>
+                        </div>
+                        <a href="{% url 'inciso_a' %}" class="btn btn-outline-primary w-100 mt-2 fw-semibold">
+                            Explorar Vista <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD INCISO B -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0 border-top border-4 border-dark hover-shadow transition">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="rounded-circle bg-dark bg-opacity-10 p-3 text-dark">
+                                <i class="bi bi-accessibility fs-3"></i>
+                            </div>
+                            <span class="badge bg-dark">Inciso B</span>
+                        </div>
+                        <h5 class="card-title fw-bold">Métricas de Discapacidad por Estado</h5>
+                        <p class="card-text text-muted small flex-grow-1">
+                            Desglose de limitaciones (motriz, visual, auditiva, lenguaje, mental) y porcentajes relativos agrupados por Entidad Federativa.
+                        </p>
+                        <div class="mb-3">
+                            <small class="text-secondary fw-semibold">SP Involucrado:</small>
+                            <code class="d-block text-dark bg-light p-1 rounded mt-1 border">SP_GET_DISABILITY_BY_STATE</code>
+                        </div>
+                        <a href="{% url 'inciso_b' %}" class="btn btn-outline-dark w-100 mt-2 fw-semibold">
+                            Explorar Vista <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD INCISO C -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0 border-top border-4 border-info hover-shadow transition">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="rounded-circle bg-info bg-opacity-10 p-3 text-info">
+                                <i class="bi bi-bar-chart-line fs-3"></i>
+                            </div>
+                            <span class="badge bg-info text-dark">Inciso C</span>
+                        </div>
+                        <h5 class="card-title fw-bold">Datos Demográficos Absolutos</h5>
+                        <p class="card-text text-muted small flex-grow-1">
+                            Análisis comparativo de las columnas censales 10, 11, 12, 22 y 26 (población total, masculina y subgrupos por edad).
+                        </p>
+                        <div class="mb-3">
+                            <small class="text-secondary fw-semibold">SP Involucrado:</small>
+                            <code class="d-block text-dark bg-light p-1 rounded mt-1 border">SP_GET_DEMOGRAPHICS</code>
+                        </div>
+                        <a href="{% url 'inciso_c' %}" class="btn btn-outline-info text-dark w-100 mt-2 fw-semibold">
+                            Explorar Vista <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SECCIÓN DE DESCARGA DE ARCHIVOS ETL & DUMP BD -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white fw-bold py-3 d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-file-earmark-arrow-down me-2 text-primary"></i>Archivos de Carga ETL y Dumps de Base de Datos (<code>./etl/DATA/</code>)</span>
+                <span class="badge bg-success">5 Archivos disponibles</span>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small mb-3">
+                    Descarga los insumos procesados por el pipeline ETL (`etl_down_up.py`) y los respaldos completos generados para PostgreSQL:
+                </p>
+                <div class="row g-2">
+                    <!-- CSV 1 -->
+                    <div class="col-md-4">
+                        <a href="{% url 'download_etl_file' 'cid_state.csv' %}" class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center justify-content-between p-2">
+                            <span><i class="bi bi-filetype-csv text-success me-2 fs-5"></i>cid_state.csv</span>
+                            <i class="bi bi-download"></i>
+                        </a>
+                    </div>
+                    <!-- CSV 2 -->
+                    <div class="col-md-4">
+                        <a href="{% url 'download_etl_file' 'cid_geography.csv' %}" class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center justify-content-between p-2">
+                            <span><i class="bi bi-filetype-csv text-success me-2 fs-5"></i>cid_geography.csv</span>
+                            <i class="bi bi-download"></i>
+                        </a>
+                    </div>
+                    <!-- CSV 3 -->
+                    <div class="col-md-4">
+                        <a href="{% url 'download_etl_file' 'fid_population_census.csv' %}" class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center justify-content-between p-2">
+                            <span><i class="bi bi-filetype-csv text-success me-2 fs-5"></i>fid_population_census.csv</span>
+                            <i class="bi bi-download"></i>
+                        </a>
+                    </div>
+                    <!-- DUMP BINARIO -->
+                    <div class="col-md-6">
+                        <a href="{% url 'download_etl_file' 'idtest_db_dump.dump' %}" class="btn btn-sm btn-outline-primary w-100 text-start d-flex align-items-center justify-content-between p-2">
+                            <span><i class="bi bi-database-fill-down text-primary me-2 fs-5"></i>idtest_db_dump.dump (Custom Format)</span>
+                            <i class="bi bi-download"></i>
+                        </a>
+                    </div>
+                    <!-- DUMP SQL -->
+                    <div class="col-md-6">
+                        <a href="{% url 'download_etl_file' 'idtest_db_dump.sql' %}" class="btn btn-sm btn-outline-dark w-100 text-start d-flex align-items-center justify-content-between p-2">
+                            <span><i class="bi bi-filetype-sql text-warning me-2 fs-5"></i>idtest_db_dump.sql (Plain Text)</span>
+                            <i class="bi bi-download"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-dark text-white text-center py-3 mt-auto">
+        <div class="container">
+            <small class="text-muted">Prueba Técnica PostgreSQL / Django Framework &copy; 2026</small>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
