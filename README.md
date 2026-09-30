@@ -50,7 +50,7 @@ Asegúrate de contar con las siguientes herramientas instaladas en tu sistema:
 git clone https://github.com/brandhi/idtest.git
 cd idtest
 ```
-Es immportante agregar un archivo .env con los siguientes datos de prueba
+Es importante agregar un archivo .env en la raiz del proyecto con los siguientes datos de prueba
 ```bash
 # Django Settings
 DEBUG=True
@@ -117,6 +117,8 @@ docker exec -i idtest_db pg_restore -U postgres -d idtest_db -n idtest --clean -
 Una vez que los contenedores estén arriba y la base de datos poblada, abre tu navegador e ingresa a:
 
 **[http://localhost:8000/census/](http://localhost:8000/census/)**
+
+Nota: Esta es una URL local, solo funcionara en la maquina host en la que se ejecute el proyecto.
 
 ### Módulos Disponibles:
 * **Dashboard Principal (`/`):** Vista general con accesos directos, esquema de la base de datos y enlace de descarga para los 5 archivos ETL/Dump.
