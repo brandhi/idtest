@@ -47,8 +47,8 @@ Asegúrate de contar con las siguientes herramientas instaladas en tu sistema:
 
 ### 1. Clonar el Repositorio
 ```bash
-git clone <URL_DE_TU_REPOSITORIO>
-cd TEST
+git clone https://github.com/brandhi/idtest.git
+cd idtest
 ```
 
 ### 2. Levantar el Entorno con Docker Compose
@@ -75,10 +75,11 @@ El script `etl_down_up.py` procesa el CSV original (`BD_PRUEBA_.csv`), genera lo
 Para ejecutarlo dentro del entorno virtual o desde el host (asegurándote de que la BD está activa en el puerto `5432`):
 
 ```bash
-# Instalación local de dependencias (si ejecutas fuera de Docker)
-pip install -r requirements.txt
+# Opción dentro del contenedor de Docker (sin instalar Python en la máquina host):
+docker compose exec web python etl/etl_down_up.py
 
-# Ejecución del pipeline ETL
+# O si se prefiere ejecutar desde el host (requiere dependencias locales):
+pip install -r requirements.txt
 python etl/etl_down_up.py
 ```
 
